@@ -552,16 +552,16 @@
                 padding: 1rem;
             }
 
-            .nav-logo-image {
-                display: none;
-            }
-
             .result-comparison {
                 flex-direction: column;
             }
 
             .comparison-arrow {
                 transform: rotate(90deg);
+            }
+
+            .nav-logo-image {
+                display: none;
             }
         }
 
@@ -688,7 +688,7 @@
     <script>
         // ===== VARIABLES =====
         const dropZone = document.getElementById('dropZone');
-        const fileInput = document.getElementById('fileInput');
+        let fileInput = document.getElementById('fileInput');
 
         // ===== DRAG & DROP =====
         ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(evt => {
@@ -787,11 +787,9 @@
         function processImage(dataUrl, fileName) {
             const img = new Image();
             img.onload = function () {
-                // Create canvas
                 const canvas = document.createElement('canvas');
                 const ctx = canvas.getContext('2d');
 
-                // Upscale (2x, max 3840)
                 const maxDim = 3840;
                 let w, h;
                 if (img.width >= img.height) {
@@ -808,11 +806,9 @@
                 ctx.imageSmoothingQuality = 'high';
                 ctx.drawImage(img, 0, 0, w, h);
 
-                // Enhance pixels
                 enhancePixels(ctx, w, h);
                 sharpen(ctx, w, h);
 
-                // Simulate processing delay
                 const delay = 3000 + Math.random() * 3000;
                 setTimeout(() => {
                     clearInterval(window._progressInterval);
@@ -838,25 +834,21 @@
             for (let i = 0; i < d.length; i += 4) {
                 let r = d[i], g = d[i+1], b = d[i+2];
 
-                // Contrast
                 const cf = 1.15;
                 r = clamp(((r/255 - 0.5) * cf + 0.5) * 255);
                 g = clamp(((g/255 - 0.5) * cf + 0.5) * 255);
                 b = clamp(((b/255 - 0.5) * cf + 0.5) * 255);
 
-                // Saturation
                 const gray = 0.299*r + 0.587*g + 0.114*b;
                 const sf = 1.2;
                 r = clamp(gray + sf * (r - gray));
                 g = clamp(gray + sf * (g - gray));
                 b = clamp(gray + sf * (b - gray));
 
-                // Brightness
                 r = clamp(r * 1.05);
                 g = clamp(g * 1.05);
                 b = clamp(b * 1.05);
 
-                // Warmth
                 r = clamp(r + 3);
                 g = clamp(g + 1);
                 b = clamp(b - 2);
@@ -895,7 +887,6 @@
         function showResult(url, fileName, canvas, origImg) {
             const name = 'enhanced_4K_' + fileName.replace(/\.[^/.]+$/, '') + '.png';
 
-            // Create original image canvas
             const oc = document.createElement('canvas');
             oc.width = origImg.width; oc.height = origImg.height;
             oc.getContext('2d').drawImage(origImg, 0, 0);
@@ -940,8 +931,8 @@
                 <input type="file" id="fileInput" accept="image/*" style="display:none;">
                 <p class="upload-note">Supports JPG, PNG — Max 10MB</p>
             `;
-            const newInput = document.getElementById('fileInput');
-            newInput.addEventListener('change', function() { handleFiles(this.files); });
+            fileInput = document.getElementById('fileInput');
+            fileInput.addEventListener('change', function() { handleFiles(this.files); });
         }
 
         // ===== NOTIFICATION =====

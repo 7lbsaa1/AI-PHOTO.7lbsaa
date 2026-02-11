@@ -6,7 +6,8 @@
     <title>PixelPerfect AI - 7LBSAA</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <style>
+    <link rel="shortcut icon" type="image/jpg" href="logox.jpg" />
+      <style>
         * {
             margin: 0;
             padding: 0;
@@ -83,38 +84,6 @@
 
         .nav-link:hover {
             color: #fff;
-        }
-
-        /* Shortcut Button */
-        .shortcut-btn {
-            position: fixed;
-            top: 100px;
-            right: 20px;
-            width: 60px;
-            height: 60px;
-            border-radius: 50%;
-            background: linear-gradient(135deg, #6366f1, #a855f7);
-            color: white;
-            border: none;
-            cursor: pointer;
-            z-index: 99;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: all 0.3s ease;
-            box-shadow: 0 4px 15px rgba(99, 102, 241, 0.4);
-            overflow: hidden;
-        }
-
-        .shortcut-btn:hover {
-            transform: scale(1.1);
-            box-shadow: 0 6px 20px rgba(99, 102, 241, 0.6);
-        }
-
-        .shortcut-img {
-            width: 32px;
-            height: 32px;
-            object-fit: contain;
         }
 
         /* Buttons */
@@ -584,20 +553,16 @@
                 padding: 1rem;
             }
 
+            .nav-logo-image {
+                display: none;
+            }
+
             .result-comparison {
                 flex-direction: column;
             }
 
             .comparison-arrow {
                 transform: rotate(90deg);
-            }
-
-            .nav-logo-image {
-                display: none;
-            }
-
-            .shortcut-btn {
-                display: none;
             }
         }
 
@@ -619,11 +584,6 @@
     </style>
 </head>
 <body>
-
-    <!-- Shortcut Button -->
-    <button class="shortcut-btn" onclick="scrollToUpload()" title="Quick Upload">
-        <img src="logox.jpg" alt="Quick Upload" class="shortcut-img">
-    </button>
 
     <!-- Navigation -->
     <nav class="navbar">
@@ -729,15 +689,7 @@
     <script>
         // ===== VARIABLES =====
         const dropZone = document.getElementById('dropZone');
-        let fileInput = document.getElementById('fileInput');
-
-        // ===== SHORTCUT FUNCTION =====
-        function scrollToUpload() {
-            const uploadSection = document.getElementById('upload');
-            if (uploadSection) {
-                window.scrollTo({ top: uploadSection.offsetTop - 80, behavior: 'smooth' });
-            }
-        }
+        const fileInput = document.getElementById('fileInput');
 
         // ===== DRAG & DROP =====
         ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(evt => {
@@ -836,9 +788,11 @@
         function processImage(dataUrl, fileName) {
             const img = new Image();
             img.onload = function () {
+                // Create canvas
                 const canvas = document.createElement('canvas');
                 const ctx = canvas.getContext('2d');
 
+                // Upscale (2x, max 3840)
                 const maxDim = 3840;
                 let w, h;
                 if (img.width >= img.height) {
@@ -855,9 +809,11 @@
                 ctx.imageSmoothingQuality = 'high';
                 ctx.drawImage(img, 0, 0, w, h);
 
+                // Enhance pixels
                 enhancePixels(ctx, w, h);
                 sharpen(ctx, w, h);
 
+                // Simulate processing delay
                 const delay = 3000 + Math.random() * 3000;
                 setTimeout(() => {
                     clearInterval(window._progressInterval);
@@ -883,21 +839,25 @@
             for (let i = 0; i < d.length; i += 4) {
                 let r = d[i], g = d[i+1], b = d[i+2];
 
+                // Contrast
                 const cf = 1.15;
                 r = clamp(((r/255 - 0.5) * cf + 0.5) * 255);
                 g = clamp(((g/255 - 0.5) * cf + 0.5) * 255);
                 b = clamp(((b/255 - 0.5) * cf + 0.5) * 255);
 
+                // Saturation
                 const gray = 0.299*r + 0.587*g + 0.114*b;
                 const sf = 1.2;
                 r = clamp(gray + sf * (r - gray));
                 g = clamp(gray + sf * (g - gray));
                 b = clamp(gray + sf * (b - gray));
 
+                // Brightness
                 r = clamp(r * 1.05);
                 g = clamp(g * 1.05);
                 b = clamp(b * 1.05);
 
+                // Warmth
                 r = clamp(r + 3);
                 g = clamp(g + 1);
                 b = clamp(b - 2);
@@ -936,6 +896,7 @@
         function showResult(url, fileName, canvas, origImg) {
             const name = 'enhanced_4K_' + fileName.replace(/\.[^/.]+$/, '') + '.png';
 
+            // Create original image canvas
             const oc = document.createElement('canvas');
             oc.width = origImg.width; oc.height = origImg.height;
             oc.getContext('2d').drawImage(origImg, 0, 0);
@@ -980,8 +941,8 @@
                 <input type="file" id="fileInput" accept="image/*" style="display:none;">
                 <p class="upload-note">Supports JPG, PNG — Max 10MB</p>
             `;
-            fileInput = document.getElementById('fileInput');
-            fileInput.addEventListener('change', function() { handleFiles(this.files); });
+            const newInput = document.getElementById('fileInput');
+            newInput.addEventListener('change', function() { handleFiles(this.files); });
         }
 
         // ===== NOTIFICATION =====

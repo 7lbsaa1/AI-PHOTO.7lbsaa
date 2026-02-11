@@ -85,6 +85,38 @@
             color: #fff;
         }
 
+        /* Shortcut Button */
+        .shortcut-btn {
+            position: fixed;
+            top: 100px;
+            right: 20px;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #6366f1, #a855f7);
+            color: white;
+            border: none;
+            cursor: pointer;
+            z-index: 99;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(99, 102, 241, 0.4);
+            overflow: hidden;
+        }
+
+        .shortcut-btn:hover {
+            transform: scale(1.1);
+            box-shadow: 0 6px 20px rgba(99, 102, 241, 0.6);
+        }
+
+        .shortcut-img {
+            width: 32px;
+            height: 32px;
+            object-fit: contain;
+        }
+
         /* Buttons */
         .cta-button {
             display: inline-block;
@@ -563,6 +595,10 @@
             .nav-logo-image {
                 display: none;
             }
+
+            .shortcut-btn {
+                display: none;
+            }
         }
 
         @media (max-width: 480px) {
@@ -583,6 +619,11 @@
     </style>
 </head>
 <body>
+
+    <!-- Shortcut Button -->
+    <button class="shortcut-btn" onclick="scrollToUpload()" title="Quick Upload">
+        <img src="logox.jpg" alt="Quick Upload" class="shortcut-img">
+    </button>
 
     <!-- Navigation -->
     <nav class="navbar">
@@ -689,6 +730,14 @@
         // ===== VARIABLES =====
         const dropZone = document.getElementById('dropZone');
         let fileInput = document.getElementById('fileInput');
+
+        // ===== SHORTCUT FUNCTION =====
+        function scrollToUpload() {
+            const uploadSection = document.getElementById('upload');
+            if (uploadSection) {
+                window.scrollTo({ top: uploadSection.offsetTop - 80, behavior: 'smooth' });
+            }
+        }
 
         // ===== DRAG & DROP =====
         ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(evt => {
